@@ -12,11 +12,13 @@ syntax match spvmSymbol /\<\v[A-Z]((__)@![a-zA-Z0-9_])+(::((__)@![a-zA-Z0-9_])+)
 
 " Class Syntax
 " ------------
-syntax region   spvmClass         start=/class/ end=/;\@=/      contains=spvmSymbol,spvmClassAttrs,spvmLineBreak
+syntax region   spvmClass         start=/class/ end=/;\@=/      nextgroup=spvmClassBlock,spvmLineBreak                            contains=spvmSymbol,spvmClassAttrs,spvmClassBlock,spvmLineBreak
 syntax keyword  spvmClassScope    public private protected      nextgroup=spvmClassType,spvmClassPreProc,spvmLineBreak  contained
 syntax keyword  spvmClassType     interface_t mulnum_t pointer  nextgroup=spvmClassPreProc,spvmLineBreak                contained
 syntax keyword  spvmClassPreProc  precompile                    nextgroup=spvmLineBreak                                 contained
-syntax region   spvmClassAttrs    start=/:/ end=/;\@=/          nextgroup=spvmClassScope,spvmClassType,spvmClassPreProc contained contains=spvmClassScope,spvmClassType,spvmClassPreProc
+syntax region   spvmClassAttrs    start=/:/ end=/[;{]\@=/       nextgroup=spvmClassScope,spvmClassType,spvmClassPreProc contained contains=spvmClassScope,spvmClassType,spvmClassPreProc
+
+syntax region   spvmClassBlock    start=/{/ end=/}/
 
 " HIGHLIGHT
 " =========
