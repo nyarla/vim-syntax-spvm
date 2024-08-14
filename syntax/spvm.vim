@@ -15,7 +15,8 @@ syntax region spvmVersionString start=/"/ end=/"/ contains=spvmVersionNumber  co
 
 " Class Syntax
 " ------------
-syntax region   spvmClass         start=/class/ end=/;\@=/      nextgroup=spvmClassBlock,spvmLineBreak                            contains=spvmSymbol,spvmClassAttrs,spvmClassBlock,spvmLineBreak
+syntax region   spvmClass         start=/class/ end=/;\@=/      nextgroup=spvmClassBlock,spvmLineBreak contains=spvmSymbol,spvmClassExtends,spvmClassAttrs,spvmClassBlock,spvmLineBreak
+syntax keyword  spvmClassExtends  extends
 syntax keyword  spvmClassScope    public private protected      nextgroup=spvmClassType,spvmClassPreProc,spvmLineBreak  contained
 syntax keyword  spvmClassType     interface_t mulnum_t pointer  nextgroup=spvmClassPreProc,spvmLineBreak                contained
 syntax keyword  spvmClassPreProc  precompile                    nextgroup=spvmLineBreak                                 contained
@@ -52,5 +53,6 @@ hi def link   spvmClassUse      Statement
 hi def link   spvmClassAlias    Statement
 hi def link   spvmClassUseAs    Statement
 hi def link   spvmClassAllow    Statement
+hi def link   spvmClassExtends  Statement
 
 let b:current_syntax = 'spvm'
