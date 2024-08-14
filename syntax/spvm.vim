@@ -10,6 +10,9 @@ endif
 syntax match spvmLineBreak /;/ contained
 syntax match spvmSymbol /\<\v[A-Z]((__)@![a-zA-Z0-9_])+(::((__)@![a-zA-Z0-9_])+)*\V\>/ contained
 
+syntax match  spvmVersionNumber /\v(\d{1,}|\d{1,}\.\d{3}|\d{1,}\.(\d{3}){2})/ contained
+syntax region spvmVersionString start=/"/ end=/"/ contains=spvmVersionNumber  contained
+
 " Class Syntax
 " ------------
 syntax region   spvmClass         start=/class/ end=/;\@=/      nextgroup=spvmClassBlock,spvmLineBreak                            contains=spvmSymbol,spvmClassAttrs,spvmClassBlock,spvmLineBreak
@@ -18,7 +21,8 @@ syntax keyword  spvmClassType     interface_t mulnum_t pointer  nextgroup=spvmCl
 syntax keyword  spvmClassPreProc  precompile                    nextgroup=spvmLineBreak                                 contained
 syntax region   spvmClassAttrs    start=/:/ end=/[;{]\@=/       nextgroup=spvmClassScope,spvmClassType,spvmClassPreProc contained contains=spvmClassScope,spvmClassType,spvmClassPreProc
 
-syntax region   spvmClassBlock    start=/{/ end=/}/
+syntax region   spvmClassBlock    start=/{/       end=/}/       contains=spvmClassVersion
+syntax region   spvmClassVersion  start=/version/ end=/;/       contains=spvmVersionString
 
 " HIGHLIGHT
 " =========
@@ -33,5 +37,9 @@ hi def link   spvmClass         Structure
 hi def link   spvmClassScope    StorageClass
 hi def link   spvmClassType     Type
 hi def link   spvmClassPreProc  PreProc
+
+hi def link   spvmClassVersion  Statement
+hi def link   spvmVersionString String
+hi def link   spvmVersionNumber Number
 
 let b:current_syntax = 'spvm'
