@@ -33,6 +33,10 @@ syntax region   spvmClassAllow    start=/allow/   end=/;/       contains=spvmCla
 
 " Variables
 " ---------
+syntax match    spvmVarSimple       /\v[$]([A-Z]((__)@![a-zA-Z0-9_])*(::((__)@![a-zA-Z0-9_])+)*|((__|[0-9])@![a-zA-Z0-9])+)/
+syntax match    spvmVarBracket      /\v[$][{]([A-Z]((__)@![a-zA-Z0-9_])*(::((__)@![a-zA-Z0-9_])+)*|((__|[0-9])@![a-zA-Z0-9])+)[}]/
+
+
 syntax keyword  spvmTypeNumeric     byte short int long float double
 syntax match    spvmLiteralInteger  /\v-?((__)@![0-9_])+[lL]?/
 syntax match    spvmLiteralHex      /\v-?0[xX]((__)@![0-9a-fA-F]+)[lL]?/
@@ -72,6 +76,9 @@ hi def link   spvmClassExtends  Statement
 
 " Variables
 " ---------
+hi def link   spvmVarSimple       Identifier
+hi def link   spvmVarBracket      Identifier
+
 hi def link   spvmTypeNumeric     Type
 hi def link   spvmLiteralInteger  Number
 hi def link   spvmLiteralInteger  Number
