@@ -18,7 +18,6 @@ syntax match    spvmClassSymbol         /\<\v[A-Z]((__)@![a-zA-Z0-9_])*(::((__)@
 syntax match    spvmClassVersionNumber  /\v(\d{1,}|\d{1,}\.\d{3}|\d{1,}\.(\d{3}){2})/       contained
 syntax region   spvmClassVersionString  start=/"/ end=/"/ contains=spvmClassVersionNumber   contained
 
-
 syntax region   spvmClass         start=/class/ end=/[;{]\@=/      nextgroup=spvmClassBlock,spvmLineBreak contains=spvmClassSymbol,spvmClassExtends,spvmClassAttrs,spvmClassBlock,spvmLineBreak
 syntax keyword  spvmClassExtends  extends contained
 syntax keyword  spvmClassScope    public private protected      nextgroup=spvmClassType,spvmClassPreProc,spvmLineBreak  contained
@@ -45,7 +44,6 @@ syntax match    spvmOpArrow         /->\v(((__|[0-9])@![a-zA-Z0-9])+(\(([^\)]|\\
 syntax match    spvmVarSimple       /\v[$]([A-Z]((__)@![a-zA-Z0-9_])*(::((__)@![a-zA-Z0-9_])+)*|((__|[0-9])@![a-zA-Z0-9])+)/
 syntax match    spvmVarBracket      /\v[$][{]([A-Z]((__)@![a-zA-Z0-9_])*(::((__)@![a-zA-Z0-9_])+)*|((__|[0-9])@![a-zA-Z0-9])+)[}]/
 syntax cluster  spvmVariable        contains=spvmVarSimple,spvmVarBracket
-
 
 syntax keyword  spvmTypeNumeric     byte short int long float double
 syntax match    spvmLiteralInteger  /\v-?((__)@![0-9_])+[lL]?/
