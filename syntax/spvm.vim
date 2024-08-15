@@ -31,6 +31,17 @@ syntax region   spvmClassUseAs    start=/as/      end=/;\@=/    contains=spvmCla
 
 syntax region   spvmClassAllow    start=/allow/   end=/;/       contains=spvmClassSymbol contained
 
+" Variables
+" ---------
+syntax keyword  spvmTypeNumeric     byte short int long float double
+syntax match    spvmLiteralInteger  /\v-?((__)@![0-9_])+[lL]?/
+syntax match    spvmLiteralHex      /\v-?0[xX]((__)@![0-9a-fA-F]+)[lL]?/
+syntax match    spvmLiteralOct      /\v-?0((__)@![0-7_])+/
+syntax match    spvmLiteralBinary   /\v-?0[!bB]((__)@![01_])+[lL]?/
+syntax match    spvmLiteralFloat    /\v-?((__)@![0-9_])+(\.((__)@![0-9])+([eE][+-]?\d+)?[fFdD]?|e\d+)/
+syntax match    spvmLiteralFloatHex /\v-?0[xX]((__)@![0-9a-fA-F])+((\.((__)@![0-9a-fA-F])+[pP][+-]?\d+[fFdD]?)|P[+-]\d+)/
+syntax cluster  spvmLiteralNumeric  contains=spvmLiteralInteger,spvmLiteralHex,spvmLiteralOct,spvmLiteralFloat,spvmLiteralFloatHex
+
 " HIGHLIGHT
 " =========
 
@@ -54,5 +65,16 @@ hi def link   spvmClassAlias    Statement
 hi def link   spvmClassUseAs    Statement
 hi def link   spvmClassAllow    Statement
 hi def link   spvmClassExtends  Statement
+
+" Variables
+" ---------
+hi def link   spvmTypeNumeric     Type
+hi def link   spvmLiteralInteger  Number
+hi def link   spvmLiteralInteger  Number
+hi def link   spvmLiteralHex      Number
+hi def link   spvmLiteralOct      Number
+hi def link   spvmLiteralBinary   Number
+hi def link   spvmLiteralFloat    Number
+hi def link   spvmLiteralFloatHex Number
 
 let b:current_syntax = 'spvm'
