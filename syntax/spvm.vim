@@ -42,6 +42,9 @@ syntax match    spvmLiteralFloat    /\v-?((__)@![0-9_])+(\.((__)@![0-9])+([eE][+
 syntax match    spvmLiteralFloatHex /\v-?0[xX]((__)@![0-9a-fA-F])+((\.((__)@![0-9a-fA-F])+[pP][+-]?\d+[fFdD]?)|P[+-]\d+)/
 syntax cluster  spvmLiteralNumeric  contains=spvmLiteralInteger,spvmLiteralHex,spvmLiteralOct,spvmLiteralFloat,spvmLiteralFloatHex
 
+
+syntax keyword  spvmLiteralBool     true false
+
 " HIGHLIGHT
 " =========
 
@@ -76,5 +79,7 @@ hi def link   spvmLiteralOct      Number
 hi def link   spvmLiteralBinary   Number
 hi def link   spvmLiteralFloat    Number
 hi def link   spvmLiteralFloatHex Number
+
+hi def link   spvmLiteralBool     Boolean
 
 let b:current_syntax = 'spvm'
