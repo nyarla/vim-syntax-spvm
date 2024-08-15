@@ -42,7 +42,6 @@ syntax match    spvmLiteralFloat    /\v-?((__)@![0-9_])+(\.((__)@![0-9])+([eE][+
 syntax match    spvmLiteralFloatHex /\v-?0[xX]((__)@![0-9a-fA-F])+((\.((__)@![0-9a-fA-F])+[pP][+-]?\d+[fFdD]?)|P[+-]\d+)/
 syntax cluster  spvmLiteralNumeric  contains=spvmLiteralInteger,spvmLiteralHex,spvmLiteralOct,spvmLiteralFloat,spvmLiteralFloatHex
 
-
 syntax keyword  spvmLiteralBool     true false
 
 syntax match    spvmLiteralChar     /\v'([ -~]|\\([atnfr"'\\]|x[a-fA-F0-9]{1,}|x\{[a-fA-F0-9]{1,}\}|[0-7]{1,3}|o\{[0-7]{1,3}\}))'/ 
