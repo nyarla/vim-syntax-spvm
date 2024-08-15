@@ -11,9 +11,13 @@ syntax match spvmLineBreak /;/ contained
 
 " Class Syntax
 " ------------
+syntax match    spvmClassMethodSymbol   /\v((__|[0-9])@![a-zA-Z0-9])+/ contained
+syntax match    spvmCLassMethodArgs     /\v\(([^\)]|\\\))+\)/ contained
+
 syntax match    spvmClassSymbol         /\<\v[A-Z]((__)@![a-zA-Z0-9_])*(::((__)@![a-zA-Z0-9_])+)*\V\>/
 syntax match    spvmClassVersionNumber  /\v(\d{1,}|\d{1,}\.\d{3}|\d{1,}\.(\d{3}){2})/       contained
 syntax region   spvmClassVersionString  start=/"/ end=/"/ contains=spvmClassVersionNumber   contained
+
 
 syntax region   spvmClass         start=/class/ end=/[;{]\@=/      nextgroup=spvmClassBlock,spvmLineBreak contains=spvmClassSymbol,spvmClassExtends,spvmClassAttrs,spvmClassBlock,spvmLineBreak
 syntax keyword  spvmClassExtends  extends contained
@@ -31,10 +35,16 @@ syntax region   spvmClassUseAs    start=/as/      end=/;\@=/    contains=spvmCla
 
 syntax region   spvmClassAllow    start=/allow/   end=/;/       contains=spvmClassSymbol contained
 
+" Operator
+" --------
+syntax match    spvmOpArrow         /->\v(((__|[0-9])@![a-zA-Z0-9])+(\(([^\)]|\\\))+\))?|\{([^}]|\\|)+\}|\[([^\]]|\\\])+\])/ contains=spvmClassMethodSymbol,spvmCLassMethodArgs,@spvmVariable,@spvmLiteralNumeric,spvmLiteralChar
+
 " Variables
 " ---------
+
 syntax match    spvmVarSimple       /\v[$]([A-Z]((__)@![a-zA-Z0-9_])*(::((__)@![a-zA-Z0-9_])+)*|((__|[0-9])@![a-zA-Z0-9])+)/
 syntax match    spvmVarBracket      /\v[$][{]([A-Z]((__)@![a-zA-Z0-9_])*(::((__)@![a-zA-Z0-9_])+)*|((__|[0-9])@![a-zA-Z0-9])+)[}]/
+syntax cluster  spvmVariable        contains=spvmVarSimple,spvmVarBracket
 
 
 syntax keyword  spvmTypeNumeric     byte short int long float double
@@ -63,6 +73,8 @@ hi def link   spvmClass         Structure
 hi def link   spvmClassScope    StorageClass
 hi def link   spvmClassType     Type
 hi def link   spvmClassPreProc  PreProc
+
+hi def link   spvmClassMethodSymbol   Function
 
 hi def link   spvmClassVersion        Statement
 hi def link   spvmClassVersionString  String
