@@ -2,96 +2,104 @@ if exists('b:current_syntax')
   finish
 endif
 
-syn match spvmClassName /\u\w\+\%(::\w\+\)*/ contained
-syn match spvmFuncName /\w\+/ contained
-syn match spvmPropName /\w\+/ contained
-syn match spvmVarName /\w\+\%(::\w\+\)*/ contained
-syn match spvmSigil /@\$\|[$@]/ contained contains=spvmDerefSigil
+" SYNTAX
+" ======
 
-syn match spvmIntDecNum /\<\d\+\%(_\d\+\)*[lL]\?\>/
-syn match spvmIntHexNum /\<0x\x\+\%(_\x\+\)*[lL]\?\>/
-syn match spvmIntOctNum /\<0\o\+\%(_\o\+\)*[lL]\?\>/
-syn match spvmIntBinNum /\<0b[01]\+\%(_[01]\+\)*[lL]\?\>/
-syn match spvmConstant /__\%(END\|PACKAGE\|FILE\|LINE\)__/
+" Token
+" -----
+syntax match spvmLineBreak /;/ contained
 
-syn match spvmCharSingle /\\\%([0abtnfr'\\]\|x\x\{2\}\)/ contained 
-syn match spvmChar /\\\%([0abtnfrsSdDwW"\\]\|x\x\{2\}\|N{U+\x\+}\)/ contained
+" Class Syntax
+" ------------
+syntax match    spvmClassMethodSymbol   /\v((__|[0-9])@![a-zA-Z0-9])+/ contained
+syntax match    spvmCLassMethodArgs     /\v\(([^\)]|\\\))+\)/ contained
 
-syn match spvmTypes /byte\|short\|int\|long\|float\|double\|void\|string\|object\|\%(callback\|pointer\|mulnum\)_t\|\u\w\+\%(::\w\+\)*/ contains=spvmClassName
-syn keyword spvmTypes byte short int long float double void object callback_t pointer_t mulnum_t
-syn keyword spvmDecorator public private allow precompile rw ro wo native 
-syn keyword spvmOperator package use has sub new contained
+syntax match    spvmClassSymbol         /\<\v[A-Z]((__)@![a-zA-Z0-9_])*(::((__)@![a-zA-Z0-9_])+)*\V\>/
+syntax match    spvmClassVersionNumber  /\v(\d{1,}|\d{1,}\.\d{3}|\d{1,}\.(\d{3}){2})/       contained
+syntax region   spvmClassVersionString  start=/"/ end=/"/ contains=spvmClassVersionNumber   contained
 
-syn region spvmBlock start=/{/ end=/}/ contains=TOP
+syntax region   spvmClass         start=/class/ end=/[;{]\@=/      nextgroup=spvmClassBlock,spvmLineBreak contains=spvmClassSymbol,spvmClassExtends,spvmClassAttrs,spvmClassBlock,spvmLineBreak
+syntax keyword  spvmClassExtends  extends contained
+syntax keyword  spvmClassScope    public private protected      nextgroup=spvmClassType,spvmClassPreProc,spvmLineBreak  contained
+syntax keyword  spvmClassType     interface_t mulnum_t pointer  nextgroup=spvmClassPreProc,spvmLineBreak                contained
+syntax keyword  spvmClassPreProc  precompile                    nextgroup=spvmLineBreak                                 contained
+syntax region   spvmClassAttrs    start=/:/ end=/[;{]\@=/       nextgroup=spvmClassScope,spvmClassType,spvmClassPreProc contained contains=spvmClassScope,spvmClassType,spvmClassPreProc
 
-syn match spvmClass /package\s\+\u\w\+\%(::\w\+\)*/ contains=spvmOperator,spvmClassName
-syn match spvmClassExports /([a-zA-Z0-9_, ]\+)/ contains=spvmFuncName contained
-syn match spvmUseClass /use\s\+[a-zA-Z0-9_:]\+\s*\%(([^)]*)\)\?/ contains=spvmOperator,spvmClassName,spvmClassExports
-syn match spvmPropDef /has\s*[^ ]\+\s*/ contains=spvmOperator,spvmPropName
-syn match spvmFuncDef /sub\s*\%([^ ]\+\)*\s*:/ contains=spvmOperator,spvmFuncName
-syn match spvmVar /[@$]\{0,2\}[a-zA-Z_:]\+\%(\%(->\)*[^ ;"']\+\)*/ contains=spvmSigil,spvmVarName,spvmAllowDeRef,spvmAllowBracket
-syn match spvmNewInstance /new\s\+[^(;\[]\+/ contains=spvmOperator,spvmClassName,spvmTypes
-syn region spvmStringSingle start=/\'/ skip=/\\'/ end=/\'/ contains=spvmCharSingle
-syn region spvmString start=/"/ skip=/\\"/ end=/"/ contains=spvmChar,spvmVar
-syn match spvmFuncCall /\w\+(\@=/ contains=spvmFuncName
+syntax region   spvmClassBlock    start=/{/       end=/}/       contains=spvmClassVersion,spvmClassUse,spvmClassAlias,spvmClassAllow
+syntax region   spvmClassVersion  start=/version/ end=/;/       contains=spvmClassVersionString contained
 
-syn keyword spvmConditional if else elsif unless switch
-syn keyword spvmEnumDef enum
-syn keyword spvmVarDef my our
-syn match spvmAllowDeRef /->/ contained
-syn match spvmAllowBracket /{[^ }]\+}\|\[[^ \]]\+\]\|\w\+/ contains=spvmVarName,spvmIntDecNum,spvmIntHexNum,spvmIntOctNum,spvmIntBinNum contained
-syn keyword spvmCompareStr eq gt ge lt le ne 
-syn match spvmCompareNum /==\|<=\|>=\|!=\|&&\|||/
+syntax region   spvmClassUse      start=/use/     end=/;/       contains=spvmClassSymbol,spvmClassUseAs contained
+syntax region   spvmClassAlias    start=/alias/   end=/;/       contains=spvmClassSymbol,spvmClassUseAs contained
+syntax region   spvmClassUseAs    start=/as/      end=/;\@=/    contains=spvmClassSymbol contained
 
-syn keyword spvmRepeat for while last next
-syn keyword spvmCoreOperator print weaken isweak undef return BEGIN eval self length
-syn keyword spvmLabel case default break
+syntax region   spvmClassAllow    start=/allow/   end=/;/       contains=spvmClassSymbol contained
 
-syn keyword spvmException die warn
+" Operator
+" --------
+syntax match    spvmOpArrow         /->\v(((__|[0-9])@![a-zA-Z0-9])+(\(([^\)]|\\\))+\))?|\{([^}]|\\|)+\}|\[([^\]]|\\\])+\])/ contains=spvmClassMethodSymbol,spvmCLassMethodArgs,@spvmVariable,@spvmLiteralNumeric,spvmLiteralChar
 
-syn match spvmError /__/
+" Variables
+" ---------
 
-syn match spvmComment /#.*/
-syn region spvmPOD start=/\^=.*/ end=/\^=cut$/
+syntax match    spvmVarSimple       /\v[$]([A-Z]((__)@![a-zA-Z0-9_])*(::((__)@![a-zA-Z0-9_])+)*|((__|[0-9])@![a-zA-Z0-9])+)/
+syntax match    spvmVarBracket      /\v[$][{]([A-Z]((__)@![a-zA-Z0-9_])*(::((__)@![a-zA-Z0-9_])+)*|((__|[0-9])@![a-zA-Z0-9])+)[}]/
+syntax cluster  spvmVariable        contains=spvmVarSimple,spvmVarBracket
 
-hi def link spvmError Error
+syntax keyword  spvmTypeNumeric     byte short int long float double
+syntax match    spvmLiteralInteger  /\v-?((__)@![0-9_])+[lL]?/
+syntax match    spvmLiteralHex      /\v-?0[xX]((__)@![0-9a-fA-F]+)[lL]?/
+syntax match    spvmLiteralOct      /\v-?0((__)@![0-7_])+/
+syntax match    spvmLiteralBinary   /\v-?0[!bB]((__)@![01_])+[lL]?/
+syntax match    spvmLiteralFloat    /\v-?((__)@![0-9_])+(\.((__)@![0-9])+([eE][+-]?\d+)?[fFdD]?|e\d+)/
+syntax match    spvmLiteralFloatHex /\v-?0[xX]((__)@![0-9a-fA-F])+((\.((__)@![0-9a-fA-F])+[pP][+-]?\d+[fFdD]?)|P[+-]\d+)/
+syntax cluster  spvmLiteralNumeric  contains=spvmLiteralInteger,spvmLiteralHex,spvmLiteralOct,spvmLiteralFloat,spvmLiteralFloatHex
 
-hi def link spvmEnumDef Operator
-hi def link spvmVarDef Operator
-hi def link spvmInstance Operator
-hi def link spvmConditional Conditional
-hi def link spvmRepeat Repeat
-hi def link spvmCoreOperator Operator
-hi def link spvmLabel Label 
-hi def link spvmException Exception
-hi def link spvmAllowDeRef Operator
-hi def link spvmAllowBracket Keyword
-hi def link spvmCompareStr Operator
-hi def link spvmCompareNum Operator
-hi def link spvmSigil Type
+syntax keyword  spvmLiteralBool     true false
 
-hi def link spvmIntDecNum Number
-hi def link spvmIntHexNum Number
-hi def link spvmIntOctNum Number
-hi def link spvmIntBinNum Number
-hi def link spvmConstant Costant
+syntax match    spvmLiteralChar     /\v'([ -~]|\\([atnfr"'\\]|x[a-fA-F0-9]{1,}|x\{[a-fA-F0-9]{1,}\}|[0-7]{1,3}|o\{[0-7]{1,3}\}))'/ 
 
-hi def link spvmString String
-hi def link spvmStringSingle String
-hi def link spvmChar Character
-hi def link spvmCharSingle Character
-hi def link spvmFuncCall Function
+" HIGHLIGHT
+" =========
 
-hi def link spvmClassName Identifier
-hi def link spvmFuncName Function
-hi def link spvmPropName Identifier
-hi def link spvmVarName Identifier
-hi def link spvmSigil Type 
-hi def link spvmOperator Operator
-hi def link spvmTypes Type
-hi def link spvmDecorator Statement
+" Token
+" -----
+hi def link   spvmSymbol  Identifier
 
-hi def link spvmComment Comment
-hi def link spvmPOD SpecialComment
+" Class Syntax
+" ------------
+hi def link   spvmClass         Structure
+hi def link   spvmClassScope    StorageClass
+hi def link   spvmClassType     Type
+hi def link   spvmClassPreProc  PreProc
+
+hi def link   spvmClassMethodSymbol   Function
+
+hi def link   spvmClassVersion        Statement
+hi def link   spvmClassVersionString  String
+hi def link   spvmClassVersionNumber  Number
+
+hi def link   spvmClassUse      Statement
+hi def link   spvmClassAlias    Statement
+hi def link   spvmClassUseAs    Statement
+hi def link   spvmClassAllow    Statement
+hi def link   spvmClassExtends  Statement
+
+" Variables
+" ---------
+hi def link   spvmVarSimple       Identifier
+hi def link   spvmVarBracket      Identifier
+
+hi def link   spvmTypeNumeric     Type
+hi def link   spvmLiteralInteger  Number
+hi def link   spvmLiteralInteger  Number
+hi def link   spvmLiteralHex      Number
+hi def link   spvmLiteralOct      Number
+hi def link   spvmLiteralBinary   Number
+hi def link   spvmLiteralFloat    Number
+hi def link   spvmLiteralFloatHex Number
+
+hi def link   spvmLiteralBool     Boolean
+
+hi def link   spvmLiteralChar     Character
 
 let b:current_syntax = 'spvm'
